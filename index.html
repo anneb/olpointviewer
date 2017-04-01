@@ -7,7 +7,23 @@
     left: 0;
     top: 0;
     bottom: 0;
-    width: 100%;
+    right: 300px;
+  }
+  #info {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 300px;
+  }
+  #legendmap {
+    position:absolute;
+    left: 10px;
+    top: 10px;
+    height: 120px;
+    width: 120px;
+    border: 1px solid black;
+    background-color: lightgray;
   }
   </style>
   <script>
@@ -73,11 +89,56 @@
           zoom: zoom
         })
       });
-    map.getView().on('change:resolution', function(){ zoom = map.getView().getZoom()});
+
+    var legendSourceVector = new ol.source.Vector();
+    var legendFeature = new ol.Feature(new ol.geom.Point([0,0]));
+    legendFeature.set('AANT_INW', 500000);
+    legendSourceVector.addFeatures([
+      legendFeature
+    ]);
+    var legendmap = new ol.Map({
+      target: 'legendmap',
+      layers: [new ol.layer.Vector({
+        source: new ol.source.Cluster({
+          source: legendSourceVector,
+          distance: 40
+        }),
+        style: styleFunction
+      })],
+      view: new ol.View({
+        center: [0,0],
+        zoom: zoom
+      })
+    });
+
+    map.getView().on('change:resolution', function(){
+      zoom = map.getView().getZoom();
+      switch (zoom) {
+        case 10:
+          legendFeature.set('AANT_INW', 500000);
+          break;
+        case 11:
+          legendFeature.set('AANT_INW', 100000);
+          break;
+        case 12:
+          legendFeature.set('AANT_INW', 50000);
+          break;
+        case 13:
+          legendFeature.set('AANT_INW', 10000);
+          break;
+        case 14:
+          legendFeature. set('AANT_INW', 1000);
+          break;
+      }
+      legendSourceVector.changed();
+    });
   }
   </script>
 </head>
 <body onload="init()">
   <div id="map"></div>
+  <div id="info">
+    <div id="legendmap"></div>
+  </div>
 </body>
 </html>
