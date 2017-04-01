@@ -21,20 +21,24 @@
     }
     var radius = Math.pow(2, zoom - 9) * Math.sqrt(total) / 32;
     if (radius < 1) {
-      radius = 1;
+      if (radius > 0.2) {
+        radius = 1;
+      } else {
+        radius = 0;
+      }
     }
     style = new ol.style.Style({
       image: new ol.style.Circle({
         radius: radius,
-        stroke: new ol.style.Stroke({
-          color: '#fff'
-        }),
+        /* stroke: new ol.style.Stroke({
+          color: 'green'
+        }),*/
         fill: new ol.style.Fill({
           color: 'green'
         })
       }),
       text: new ol.style.Text({
-        text: total.toString(),
+        text: total ? total.toString() : '',
         fill: new ol.style.Fill({
           color: '#fff'
         })
